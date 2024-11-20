@@ -2,12 +2,12 @@ package services
 
 import (
 	"errors"
-	"go-restful-blog-api/v2/auth/service"
 	"go-restful-blog-api/v2/auth/token"
 	"go-restful-blog-api/v2/dto"
 	"go-restful-blog-api/v2/mappers"
 	"go-restful-blog-api/v2/models"
 	"go-restful-blog-api/v2/repositories"
+	"go-restful-blog-api/v2/utils"
 
 	"gorm.io/gorm"
 )
@@ -44,23 +44,27 @@ func (s *UserService) RegisterUser(userDTO dto.UserDTO) (models.User, error) {
 }
 
 // LoginUser memverifikasi kredensial pengguna
-func (s *UserService) LoginUser(UserDTO dto.UserDTO) (models.User, string, error) {
+func (s *UserService) LoginUser(UserDTO dto.UserDTO) (dto.UserDTO, string, error) {
+	// Mengonversi UserDTO ke dalam model User
+	user := mappers.MapToUser(UserDTO)
+
 	// Cari pengguna berdasarkan username melalui repository
-	user, err := s.repo.GetUserByUsername(UserDTO.Username)
+	user, err := s.repo.GetUserByUsername(user.Username)
 	if err != nil {
-		return models.User{}, "", errors.New("username tidak ditemukan") // Kembalikan error jika user tidak ditemukan
+		return dto.UserDTO{}, "", errors.New("username tidak ditemukan") // Kembalikan error jika user tidak ditemukan
 	}
 
 	// Verifikasi password menggunakan auth/service
-	if !service.ComparePassword(user.Password, UserDTO.Password) {
-		return models.User{}, "", errors.New("invalid username or password")
+	if !utils.ComparePassword(user.Password, UserDTO.Password) {
+		return dto.UserDTO{}, "", errors.New("invalid username or password")
 	}
 
 	// Generate JWT token jika login berhasil
 	token, err := token.GenerateToken(user)
 	if err != nil {
-		return models.User{}, "", err
+		return dto.UserDTO{}, "", err
 	}
 
-	return user, token, nil // Kembalikan user jika berhasil login
+	UserDTO = mappers.MapToUserDTO(user)
+	return UserDTO, token, nil // Kembalikan user jika berhasil login
 }

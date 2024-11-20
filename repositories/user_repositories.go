@@ -1,9 +1,9 @@
 package repositories
 
 import (
-	"errors"
-	"go-restful-blog-api/v2/auth/service" // Mengimport package untuk hashing password
+	"errors" // Mengimport package untuk hashing password
 	"go-restful-blog-api/v2/models"
+	"go-restful-blog-api/v2/utils"
 
 	"gorm.io/gorm"
 )
@@ -27,7 +27,7 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 // RegisterUser menerima model User dan menyimpannya ke dalam database
 func (repo *userRepository) RegisterUser(user models.User) (models.User, error) {
 	// Hash password sebelum disimpan di database
-	hashedPassword, err := service.HashPassword(user.Password)
+	hashedPassword, err := utils.HashPassword(user.Password)
 	if err != nil {
 		return models.User{}, err
 	}

@@ -39,6 +39,15 @@ func (s *UserService) RegisterUser(userDTO dto.UserDTO) (models.User, error) {
 		return models.User{}, errors.New("username already exists")
 	}
 
+	// Hash password sebelum disimpan di database
+	hashedPassword, err := utils.HashPassword(user.Password)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	// Update password dengan yang sudah di-hash
+	user.Password = hashedPassword
+
 	// Panggil repository untuk menyimpan user ke dalam database
 	return s.repo.RegisterUser(user)
 }

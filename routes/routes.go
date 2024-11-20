@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"go-restful-blog-api/v2/auth/middleware"
 	"go-restful-blog-api/v2/config"
 	"go-restful-blog-api/v2/controllers"  // Mengimpor controller yang sesuai
 	"go-restful-blog-api/v2/repositories" // Mengimpor repository yang sesuai
@@ -22,6 +23,14 @@ func SetupRouter() *gin.Engine {
 
 	// Menentukan route untuk POST /register yang mengarah ke RegisterUser pada userController
 	router.POST("/register", userController.RegisterUser)
+	router.POST("/login", userController.LoginUser)
+
+	// Group route yang memerlukan autentikasi
+	protected := router.Group("/api")
+	protected.Use(middleware.AuthMiddleware())
+	{
+		//protected.GET("/user", GetUserData)
+	}
 
 	// Kembalikan router yang sudah dikonfigurasi
 	return router

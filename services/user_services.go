@@ -48,7 +48,8 @@ func (s *UserService) RegisterUser(userDTO dto.UserDTO) (dto.UserDTO, error) {
 	user.Password = hashedPassword
 
 	// Panggil repository untuk menyimpan user ke dalam database
-	s.repo.RegisterUser(user)
+	s.repo.RegisterUser(&user)
+	//return userDTO, nil
 	userDTO = mappers.MapToUserDTO(user)
 	return userDTO, nil
 }

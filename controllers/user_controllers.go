@@ -52,7 +52,7 @@ func (controller *userController) LoginUser(c *gin.Context) {
 	// Bind data dari request body ke LoginDTO
 	if err := c.ShouldBindJSON(&loginDTO); err != nil {
 		// Jika data yang diterima tidak valid (misalnya field yang wajib tidak ada)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		utils.BadRequestResponse(c, err.Error())
 		return
 	}
 

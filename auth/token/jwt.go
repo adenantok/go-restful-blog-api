@@ -21,7 +21,7 @@ func GenerateToken(user models.User) (string, error) {
 	// Membaca secret key dari environment variable atau menggunakan default
 	secretKey := os.Getenv("JWT_SECRET_KEY")
 	if secretKey == "" {
-		secretKey = "your_secret_key" // Gantilah dengan secret key Anda yang lebih aman
+		secretKey = "hii-yNwFfjTEyG7W2JdhdQI5cFOp4r7MXk1ycc-vYoM" // Gantilah dengan secret key Anda yang lebih aman
 	}
 
 	// Menentukan waktu kedaluwarsa token

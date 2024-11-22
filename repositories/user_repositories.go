@@ -9,7 +9,7 @@ import (
 
 // UserRepository mendefinisikan kontrak repositori untuk user
 type UserRepository interface {
-	RegisterUser(user models.User) (models.User, error)
+	RegisterUser(user *models.User) (models.User, error)
 	GetUserByUsername(username string) (models.User, error)
 }
 
@@ -24,7 +24,7 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 }
 
 // RegisterUser menerima model User dan menyimpannya ke dalam database
-func (repo *userRepository) RegisterUser(user models.User) (models.User, error) {
+func (repo *userRepository) RegisterUser(user *models.User) (models.User, error) {
 
 	// Simpan user ke database
 	if err := repo.db.Create(&user).Error; err != nil {
@@ -35,7 +35,7 @@ func (repo *userRepository) RegisterUser(user models.User) (models.User, error) 
 		return models.User{}, err
 	}
 
-	return user, nil
+	return *user, nil
 }
 
 // GetUserByUsername mencari user berdasarkan username

@@ -21,15 +21,20 @@ func SetupRouter() *gin.Engine {
 	userService := services.NewUserService(userRepo)             // Membuat instance UserService
 	userController := controllers.NewUserController(userService) // Membuat instance UserController
 
+	postRepo := repositories.NewPostRepository(config.DB)
+	postService := services.NewPostService(postRepo)
+	postController := controllers.NewPostController(postService)
+
 	// Menentukan route untuk POST /register yang mengarah ke RegisterUser pada userController
 	router.POST("/register", userController.RegisterUser)
 	router.POST("/login", userController.LoginUser)
 
 	// Group route yang memerlukan autentikasi
-	protected := router.Group("/api")
+	protected := router.Group("/")
 	protected.Use(middleware.AuthMiddleware())
 	{
 		//protected.GET("/user", GetUserData)
+		protected.POST("/posts", postController.CreatePost)
 	}
 
 	// Kembalikan router yang sudah dikonfigurasi

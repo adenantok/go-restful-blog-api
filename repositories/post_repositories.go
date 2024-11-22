@@ -8,7 +8,7 @@ import (
 
 type PostRepository interface {
 	CreatePost(post *models.Post) (models.Post, error)
-	//GetUserByUsername(username string) (models.User, error)
+	GetPosts() ([]models.Post, error)
 }
 
 type postRepository struct {
@@ -25,4 +25,12 @@ func (repo *postRepository) CreatePost(post *models.Post) (models.Post, error) {
 		return models.Post{}, err
 	}
 	return *post, nil
+}
+
+func (repo *postRepository) GetPosts() ([]models.Post, error) {
+	var posts []models.Post
+	if err := repo.db.Find(&posts).Error; err != nil {
+		return nil, err
+	}
+	return posts, nil
 }

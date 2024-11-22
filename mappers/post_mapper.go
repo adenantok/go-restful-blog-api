@@ -21,3 +21,16 @@ func MapToPostDTO(post models.Post) *dto.PostDTO {
 		Content: post.Content,
 	}
 }
+
+func MapToPostDTOs(posts []models.Post) []dto.PostDTO {
+	postDTOs := make([]dto.PostDTO, len(posts))
+	for i, post := range posts {
+		postDTOs[i] = dto.PostDTO{
+			ID:      post.ID,
+			Title:   post.Title,
+			Content: post.Content,
+			UserID:  post.UserID,
+		}
+	}
+	return postDTOs
+}

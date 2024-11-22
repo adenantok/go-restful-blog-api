@@ -47,3 +47,12 @@ func (controller *postController) CreatePost(c *gin.Context) {
 	// Return success response with created data
 	utils.CreatedResponse(c, "Post created successfully", createdPost)
 }
+
+func (controller *postController) GetPosts(c *gin.Context) {
+	posts, err := controller.service.GetPosts()
+	if err != nil {
+		utils.InternalServerErrorResponse(c, err.Error())
+		return
+	}
+	utils.SuccessResponse(c, "posts retrieved successfully", posts)
+}

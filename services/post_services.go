@@ -29,3 +29,14 @@ func (s *PostService) CreatePost(postDTO *dto.PostDTO) (dto.PostDTO, error) {
 
 	return *postDTO, nil
 }
+
+func (s *PostService) GetPosts() ([]dto.PostDTO, error) {
+	posts, err := s.repo.GetPosts()
+	if err != nil {
+		return nil, err
+	}
+
+	// postDTO:=mappers.MapToPostDTO(posts)
+	// return postDTO,nil
+	return mappers.MapToPostDTOs(posts), nil
+}

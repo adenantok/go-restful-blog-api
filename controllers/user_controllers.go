@@ -64,9 +64,15 @@ func (controller *userController) LoginUser(c *gin.Context) {
 		return
 	}
 
-	// Kembalikan response sukses dengan data user dan token
-	c.JSON(http.StatusOK, gin.H{
+	// // Kembalikan response sukses dengan data user dan token
+	// c.JSON(http.StatusOK, gin.H{
+	// 	"user":  user,
+	// 	"token": token,
+	// })
+
+	responseData := gin.H{
 		"user":  user,
 		"token": token,
-	})
+	}
+	utils.SuccessResponse(c, "login successful", responseData)
 }

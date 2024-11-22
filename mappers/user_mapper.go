@@ -18,6 +18,6 @@ func MapToUserDTO(user models.User) dto.UserDTO {
 	return dto.UserDTO{
 		ID:       user.ID,
 		Username: user.Username,
-		Password: user.Password, // Jangan mengirimkan password dalam response JSON untuk alasan keamanan
+		//Password: user.Password, // Pastikan tidak ada field ID
 	}
 }

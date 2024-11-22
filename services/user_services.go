@@ -5,7 +5,6 @@ import (
 	"go-restful-blog-api/v2/auth/token"
 	"go-restful-blog-api/v2/dto"
 	"go-restful-blog-api/v2/mappers"
-	"go-restful-blog-api/v2/models"
 	"go-restful-blog-api/v2/repositories"
 	"go-restful-blog-api/v2/utils"
 
@@ -25,7 +24,7 @@ func NewUserService(repo repositories.UserRepository) *UserService {
 }
 
 // RegisterUser menerima data UserDTO, memvalidasi dan menyimpannya ke database
-func (s *UserService) RegisterUser(userDTO dto.UserDTO) (models.User, error) {
+func (s *UserService) RegisterUser(userDTO dto.UserDTO) (dto.UserDTO, error) {
 	// Mengonversi UserDTO ke dalam model User
 	user := mappers.MapToUser(userDTO)
 
@@ -33,29 +32,31 @@ func (s *UserService) RegisterUser(userDTO dto.UserDTO) (models.User, error) {
 	existingUser, err := s.repo.GetUserByUsername(user.Username)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		// Jika ada error lain selain record not found
-		return models.User{}, err
+		return dto.UserDTO{}, err
 	}
 	if existingUser.ID != 0 { // Mengindikasikan bahwa username sudah ada
-		return models.User{}, errors.New("username already exists")
+		return dto.UserDTO{}, errors.New("username already exists")
 	}
 
 	// Hash password sebelum disimpan di database
 	hashedPassword, err := utils.HashPassword(user.Password)
 	if err != nil {
-		return models.User{}, err
+		return dto.UserDTO{}, err
 	}
 
 	// Update password dengan yang sudah di-hash
 	user.Password = hashedPassword
 
 	// Panggil repository untuk menyimpan user ke dalam database
-	return s.repo.RegisterUser(user)
+	s.repo.RegisterUser(user)
+	userDTO = mappers.MapToUserDTO(user)
+	return userDTO, nil
 }
 
 // LoginUser memverifikasi kredensial pengguna
-func (s *UserService) LoginUser(UserDTO dto.UserDTO) (dto.UserDTO, string, error) {
+func (s *UserService) LoginUser(userDTO dto.UserDTO) (dto.UserDTO, string, error) {
 	// Mengonversi UserDTO ke dalam model User
-	user := mappers.MapToUser(UserDTO)
+	user := mappers.MapToUser(userDTO)
 
 	// Cari pengguna berdasarkan username melalui repository
 	user, err := s.repo.GetUserByUsername(user.Username)
@@ -64,7 +65,7 @@ func (s *UserService) LoginUser(UserDTO dto.UserDTO) (dto.UserDTO, string, error
 	}
 
 	// Verifikasi password menggunakan auth/service
-	if !utils.ComparePassword(user.Password, UserDTO.Password) {
+	if !utils.ComparePassword(user.Password, userDTO.Password) {
 		return dto.UserDTO{}, "", errors.New("invalid username or password")
 	}
 
@@ -74,6 +75,6 @@ func (s *UserService) LoginUser(UserDTO dto.UserDTO) (dto.UserDTO, string, error
 		return dto.UserDTO{}, "", err
 	}
 
-	UserDTO = mappers.MapToUserDTO(user)
-	return UserDTO, token, nil // Kembalikan user jika berhasil login
+	userDTO = mappers.MapToUserDTO(user)
+	return userDTO, token, nil // Kembalikan user jika berhasil login
 }

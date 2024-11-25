@@ -7,6 +7,7 @@ import (
 
 func MapToPost(postDTO dto.PostDTO) models.Post {
 	return models.Post{
+		ID:      postDTO.ID,
 		UserID:  postDTO.UserID,
 		Title:   postDTO.Title,
 		Content: postDTO.Content,

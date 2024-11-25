@@ -10,6 +10,7 @@ type PostRepository interface {
 	CreatePost(post *models.Post) (models.Post, error)
 	GetPosts() ([]models.Post, error)
 	GetPostByID(ID int) (models.Post, error)
+	UpdatePost(post *models.Post) (models.Post, error)
 }
 
 type postRepository struct {
@@ -42,4 +43,13 @@ func (repo *postRepository) GetPostByID(ID int) (models.Post, error) {
 		return models.Post{}, err
 	}
 	return post, nil
+}
+
+func (repo *postRepository) UpdatePost(post *models.Post) (models.Post, error) {
+
+	if err := repo.db.Save(&post).Error; err != nil {
+		return models.Post{}, err
+	}
+	return *post, nil
+
 }

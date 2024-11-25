@@ -72,3 +72,32 @@ func (controller *postController) GetPostByID(c *gin.Context) {
 	}
 	utils.SuccessResponse(c, "post retrieved successfully", post)
 }
+
+func (controller *postController) UpdatePost(c *gin.Context) {
+	var postDTO dto.PostDTO
+
+	// Bind the incoming JSON data to postDTO
+	if err := c.ShouldBindJSON(&postDTO); err != nil {
+		utils.BadRequestResponse(c, err.Error())
+		return
+	}
+
+	// Ambil userID dari konteks
+	userID, exists := c.Get("userID")
+	if !exists {
+		utils.InternalServerErrorResponse(c, "UserID not found in context")
+		return
+	}
+
+	postDTO.UserID = userID.(int)
+
+	// Pass the DTO to the PostService to process the logic
+	updatePost, err := controller.service.UpdatePost(postDTO)
+	if err != nil {
+		utils.InternalServerErrorResponse(c, err.Error())
+		return
+	}
+
+	// Return success response with created data
+	utils.CreatedResponse(c, "Post updated successfully", updatePost)
+}

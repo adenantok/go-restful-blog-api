@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"go-restful-blog-api/v2/dto"
 	"go-restful-blog-api/v2/mappers"
 	"go-restful-blog-api/v2/repositories"
@@ -47,5 +48,34 @@ func (s *PostService) GetPostByID(ID int) (dto.PostDTO, error) {
 		return dto.PostDTO{}, err
 	}
 	postDTO := mappers.MapToPostDTO(post)
+	return postDTO, nil
+}
+
+func (s *PostService) UpdatePost(postDTO dto.PostDTO) (dto.PostDTO, error) {
+	post := mappers.MapToPost(postDTO)
+
+	// Mendapatkan data existing berdasarkan ID
+	existingData, err := s.repo.GetPostByID(post.ID)
+	if err != nil {
+		return dto.PostDTO{}, err // Kembalikan error jika data tidak ditemukan
+	}
+
+	// Validasi bahwa user yang ingin mengedit adalah pemilik postingan
+	if existingData.UserID != postDTO.UserID {
+		return dto.PostDTO{}, errors.New("unauthorized: user does not own this post")
+	}
+
+	if post.Content != "" {
+		existingData.Content = post.Content
+	}
+	if post.Title != "" {
+		existingData.Title = post.Title
+	}
+
+	updatedPost, err := s.repo.UpdatePost(&existingData)
+	if err != nil {
+		return dto.PostDTO{}, nil
+	}
+	postDTO = mappers.MapToPostDTO(updatedPost)
 	return postDTO, nil
 }

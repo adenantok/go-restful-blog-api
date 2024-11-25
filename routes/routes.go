@@ -36,6 +36,7 @@ func SetupRouter() *gin.Engine {
 		protected.GET("/posts", postController.GetPosts)
 		protected.POST("/posts", postController.CreatePost)
 		protected.GET("/posts/:id", postController.GetPostByID)
+		protected.PUT("/posts/", postController.UpdatePost)
 	}
 
 	// Kembalikan router yang sudah dikonfigurasi

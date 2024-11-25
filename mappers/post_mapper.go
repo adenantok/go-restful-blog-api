@@ -9,12 +9,12 @@ func MapToPost(postDTO dto.PostDTO) models.Post {
 	return models.Post{
 		UserID:  postDTO.UserID,
 		Title:   postDTO.Title,
-		Content: postDTO.Content, // Password akan dihash sebelum disimpan di database
+		Content: postDTO.Content,
 	}
 }
 
-func MapToPostDTO(post models.Post) *dto.PostDTO {
-	return &dto.PostDTO{
+func MapToPostDTO(post models.Post) dto.PostDTO {
+	return dto.PostDTO{
 		ID:      post.ID,
 		UserID:  post.UserID,
 		Title:   post.Title,

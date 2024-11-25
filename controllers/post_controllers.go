@@ -4,6 +4,7 @@ import (
 	"go-restful-blog-api/v2/dto"
 	"go-restful-blog-api/v2/services"
 	"go-restful-blog-api/v2/utils"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,7 +39,7 @@ func (controller *postController) CreatePost(c *gin.Context) {
 	postDTO.UserID = userID.(int)
 
 	// Pass the DTO to the PostService to process the logic
-	createdPost, err := controller.service.CreatePost(&postDTO)
+	createdPost, err := controller.service.CreatePost(postDTO)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, err.Error())
 		return
@@ -55,4 +56,19 @@ func (controller *postController) GetPosts(c *gin.Context) {
 		return
 	}
 	utils.SuccessResponse(c, "posts retrieved successfully", posts)
+}
+
+func (controller *postController) GetPostByID(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		utils.BadRequestResponse(c, "Invalid ID format")
+		return
+	}
+	post, err := controller.service.GetPostByID(id)
+	if err != nil {
+		utils.InternalServerErrorResponse(c, err.Error())
+		return
+	}
+	utils.SuccessResponse(c, "post retrieved successfully", post)
 }

@@ -9,6 +9,7 @@ import (
 type PostRepository interface {
 	CreatePost(post *models.Post) (models.Post, error)
 	GetPosts() ([]models.Post, error)
+	GetPostByID(ID int) (models.Post, error)
 }
 
 type postRepository struct {
@@ -33,4 +34,12 @@ func (repo *postRepository) GetPosts() ([]models.Post, error) {
 		return nil, err
 	}
 	return posts, nil
+}
+
+func (repo *postRepository) GetPostByID(ID int) (models.Post, error) {
+	var post models.Post
+	if err := repo.db.First(&post, ID).Error; err != nil {
+		return models.Post{}, err
+	}
+	return post, nil
 }

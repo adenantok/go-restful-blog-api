@@ -16,8 +16,8 @@ func NewPostService(repo repositories.PostRepository) *PostService {
 	}
 }
 
-func (s *PostService) CreatePost(postDTO *dto.PostDTO) (dto.PostDTO, error) {
-	post := mappers.MapToPost(*postDTO)
+func (s *PostService) CreatePost(postDTO dto.PostDTO) (dto.PostDTO, error) {
+	post := mappers.MapToPost(postDTO)
 	// Menyimpan post ke database melalui repository
 	createdPost, err := s.repo.CreatePost(&post)
 	if err != nil {
@@ -27,7 +27,7 @@ func (s *PostService) CreatePost(postDTO *dto.PostDTO) (dto.PostDTO, error) {
 	// Mengonversi post yang baru dibuat ke PostDTO untuk response
 	postDTO = mappers.MapToPostDTO(createdPost)
 
-	return *postDTO, nil
+	return postDTO, nil
 }
 
 func (s *PostService) GetPosts() ([]dto.PostDTO, error) {
@@ -39,4 +39,13 @@ func (s *PostService) GetPosts() ([]dto.PostDTO, error) {
 	// postDTO:=mappers.MapToPostDTO(posts)
 	// return postDTO,nil
 	return mappers.MapToPostDTOs(posts), nil
+}
+
+func (s *PostService) GetPostByID(ID int) (dto.PostDTO, error) {
+	post, err := s.repo.GetPostByID(ID)
+	if err != nil {
+		return dto.PostDTO{}, err
+	}
+	postDTO := mappers.MapToPostDTO(post)
+	return postDTO, nil
 }

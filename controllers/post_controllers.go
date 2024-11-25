@@ -101,3 +101,29 @@ func (controller *postController) UpdatePost(c *gin.Context) {
 	// Return success response with created data
 	utils.CreatedResponse(c, "Post updated successfully", updatePost)
 }
+
+func (controller *postController) DeletePost(c *gin.Context) {
+	var postDTO dto.PostDTO
+	idParam := c.Param("id")
+
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		utils.BadRequestResponse(c, "Invalid ID format")
+		return
+	}
+
+	userID, exists := c.Get("userID")
+	if !exists {
+		utils.InternalServerErrorResponse(c, "UserID not found in context")
+		return
+	}
+
+	postDTO.UserID = userID.(int)
+
+	err = controller.service.DeletePost(id, postDTO)
+	if err != nil {
+		utils.InternalServerErrorResponse(c, err.Error())
+		return
+	}
+	utils.SuccessResponse(c, "post deleted successfully", nil)
+}

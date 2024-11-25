@@ -11,6 +11,7 @@ type PostRepository interface {
 	GetPosts() ([]models.Post, error)
 	GetPostByID(ID int) (models.Post, error)
 	UpdatePost(post *models.Post) (models.Post, error)
+	DeletePost(ID int) error
 }
 
 type postRepository struct {
@@ -52,4 +53,12 @@ func (repo *postRepository) UpdatePost(post *models.Post) (models.Post, error) {
 	}
 	return *post, nil
 
+}
+
+func (repo *postRepository) DeletePost(ID int) error {
+
+	if err := repo.db.Delete(&models.Post{}, ID).Error; err != nil {
+		return err
+	}
+	return nil
 }

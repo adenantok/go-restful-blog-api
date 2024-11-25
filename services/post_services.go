@@ -79,3 +79,25 @@ func (s *PostService) UpdatePost(postDTO dto.PostDTO) (dto.PostDTO, error) {
 	postDTO = mappers.MapToPostDTO(updatedPost)
 	return postDTO, nil
 }
+
+func (s *PostService) DeletePost(ID int, postDTO dto.PostDTO) error {
+
+	existingData, err := s.repo.GetPostByID(ID)
+	//log.Println("id", post.ID)
+	if err != nil {
+		return err // Kembalikan error jika data tidak ditemukan
+	}
+
+	// log.Println("id", existingData.UserID)
+	// log.Println("id", postDTO.UserID)
+
+	// Validasi bahwa user yang ingin menghapus adalah pemilik postingan
+	if existingData.UserID != postDTO.UserID {
+		return errors.New("unauthorized: user does not own this post")
+	}
+
+	if err := s.repo.DeletePost(ID); err != nil {
+		return err
+	}
+	return nil
+}

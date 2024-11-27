@@ -13,3 +13,9 @@ type PostDTO struct {
 	Title   string `json:"title"`
 	Content string `json:"content"`
 }
+
+type PostDTOResponse struct {
+	ID      int    `json:"id"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
+}

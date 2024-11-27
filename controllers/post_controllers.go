@@ -21,10 +21,10 @@ func NewPostController(service *services.PostService) *postController {
 
 // HandleCreatePost handles the creation of a new post
 func (controller *postController) CreatePost(c *gin.Context) {
-	var postDTO dto.PostDTO
+	var CreatePostDTO dto.CreatePostDTO
 
 	// Bind the incoming JSON data to postDTO
-	if err := c.ShouldBindJSON(&postDTO); err != nil {
+	if err := c.ShouldBindJSON(&CreatePostDTO); err != nil {
 		utils.BadRequestResponse(c, err.Error())
 		return
 	}
@@ -36,10 +36,10 @@ func (controller *postController) CreatePost(c *gin.Context) {
 		return
 	}
 
-	postDTO.UserID = userID.(int)
+	CreatePostDTO.UserID = userID.(int)
 
 	// Pass the DTO to the PostService to process the logic
-	createdPost, err := controller.service.CreatePost(postDTO)
+	createdPost, err := controller.service.CreatePost(CreatePostDTO)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, err.Error())
 		return

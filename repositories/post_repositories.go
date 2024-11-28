@@ -12,6 +12,8 @@ type PostRepository interface {
 	GetPostByID(ID int) (models.Post, error)
 	UpdatePost(post *models.Post) (models.Post, error)
 	DeletePost(ID int) error
+	GetPostsWithPagination(page, limit int) ([]models.Post, error)
+	GetTotalRecords() (int, error)
 }
 
 type postRepository struct {
@@ -61,4 +63,21 @@ func (repo *postRepository) DeletePost(ID int) error {
 		return err
 	}
 	return nil
+}
+
+func (repo *postRepository) GetPostsWithPagination(page, limit int) ([]models.Post, error) {
+	var posts []models.Post
+	offset := (page - 1) * limit
+	if err := repo.db.Offset(offset).Limit(limit).Find(&posts).Error; err != nil {
+		return nil, err
+	}
+	return posts, nil
+}
+
+func (repo *postRepository) GetTotalRecords() (int, error) {
+	var count int64
+	if err := repo.db.Model(&models.Post{}).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return int(count), nil
 }

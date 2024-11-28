@@ -50,12 +50,26 @@ func (controller *postController) CreatePost(c *gin.Context) {
 }
 
 func (controller *postController) GetPosts(c *gin.Context) {
-	posts, err := controller.service.GetPosts()
+	page := c.DefaultQuery("page", "1")    // ambil halaman saat ini dari query string (default 1)
+	limit := c.DefaultQuery("limit", "10") // ambil limit (default 10)
+	pageInt, _ := strconv.Atoi(page)
+	limitInt, _ := strconv.Atoi(limit)
+
+	// Ambil posts dengan pagination
+	posts, totalRecords, err := controller.service.GetPosts(pageInt, limitInt)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, err.Error())
 		return
 	}
-	utils.SuccessResponse(c, "posts retrieved successfully", posts)
+
+	// Generate pagination metadata
+	paginationMeta := utils.GeneratePaginationMeta(totalRecords, pageInt, limitInt)
+
+	// Kembalikan response JSON dengan data dan metadata pagination
+	utils.SuccessResponse(c, "posts retrieved successfully", map[string]interface{}{
+		"data":       posts,
+		"pagination": paginationMeta,
+	})
 }
 
 func (controller *postController) GetPostByID(c *gin.Context) {

@@ -31,15 +31,23 @@ func (s *PostService) CreatePost(CreatePostDTO dto.CreatePostDTO) (dto.PostDTO, 
 	return postDTO, nil
 }
 
-func (s *PostService) GetPosts() ([]dto.PostDTO, error) {
-	posts, err := s.repo.GetPosts()
+func (s *PostService) GetPosts(page, limit int) ([]dto.PostDTO, int, error) {
+	// Hitung total record untuk pagination
+	totalRecords, err := s.repo.GetTotalRecords()
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	// postDTO:=mappers.MapToPostDTO(posts)
-	// return postDTO,nil
-	return mappers.MapToPostDTOs(posts), nil
+	// Ambil data posts berdasarkan pagination
+	posts, err := s.repo.GetPostsWithPagination(page, limit)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Convert ke PostDTO
+	postDTOs := mappers.MapToPostDTOs(posts)
+
+	return postDTOs, totalRecords, nil
 }
 
 func (s *PostService) GetPostByID(ID int) (dto.PostDTO, error) {

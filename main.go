@@ -12,6 +12,7 @@ func main() {
 	//config.TestDBConnection()
 	models.MigrateUser(config.DB)
 	models.MigratePost(config.DB)
+	models.MigrateComment(config.DB)
 
 	// Menyiapkan router
 	router := routes.SetupRouter()

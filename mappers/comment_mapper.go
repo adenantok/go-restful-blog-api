@@ -32,3 +32,11 @@ func MapToCreateComment(CreateCommentDTO dto.CreateCommentDTO) models.Comment {
 		Content: CreateCommentDTO.Content,
 	}
 }
+
+func MapToCommentDTOs(comments []models.Comment) []dto.CommentDTO {
+	commentDTOs := make([]dto.CommentDTO, len(comments))
+	for i, comment := range comments {
+		commentDTOs[i] = MapToCommentDTO(comment)
+	}
+	return commentDTOs
+}

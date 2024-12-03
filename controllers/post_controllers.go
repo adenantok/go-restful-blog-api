@@ -73,7 +73,7 @@ func (controller *postController) GetPosts(c *gin.Context) {
 }
 
 func (controller *postController) GetPostByID(c *gin.Context) {
-	idParam := c.Param("id")
+	idParam := c.Param("postID")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
 		utils.BadRequestResponse(c, "Invalid ID format")
@@ -118,7 +118,7 @@ func (controller *postController) UpdatePost(c *gin.Context) {
 
 func (controller *postController) DeletePost(c *gin.Context) {
 	var postDTO dto.PostDTO
-	idParam := c.Param("id")
+	idParam := c.Param("postID")
 
 	id, err := strconv.Atoi(idParam)
 	if err != nil {

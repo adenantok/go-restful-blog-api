@@ -45,3 +45,16 @@ func (s *CommentService) CreateComment(CreateCommentDTO dto.CreateCommentDTO) (d
 
 	return commentDTO, nil
 }
+
+func (s *CommentService) GetCommentsByPostID(postID int) ([]dto.CommentDTO, error) {
+	// Mengambil data komentar berdasarkan postID dari repository
+	comments, err := s.repo.GetCommentsByPostID(postID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Mengonversi hasil model ke DTO menggunakan mapper
+	commentDTOs := mappers.MapToCommentDTOs(comments)
+
+	return commentDTOs, nil
+}

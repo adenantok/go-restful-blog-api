@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"errors"
 	"go-restful-blog-api/v2/models"
 
 	"gorm.io/gorm"
@@ -9,7 +10,7 @@ import (
 type CommentRepository interface {
 	CreateComment(comment *models.Comment) (models.Comment, error)
 	CheckPostExists(postID int) (bool, error)
-	//GetCommentsByPostID(postID int) ([]models.Comment, error)
+	GetCommentsByPostID(postID int) ([]models.Comment, error)
 	//GetCommentByID(ID int) (models.Comment, error)
 	//UpdateComment(comment *models.Comment) (models.Comment, error)
 	//DeleteComment(ID int) error
@@ -42,4 +43,18 @@ func (repo *commentRepository) CreateComment(comment *models.Comment) (models.Co
 		return models.Comment{}, err
 	}
 	return *comment, nil
+}
+
+func (repo *commentRepository) GetCommentsByPostID(postID int) ([]models.Comment, error) {
+	var comments []models.Comment
+
+	// Query to find comments by post ID
+	if err := repo.db.Where("post_id = ?", postID).Find(&comments).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil // No comments found for this post
+		}
+		return nil, err // Return any other errors
+	}
+
+	return comments, nil
 }

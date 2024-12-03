@@ -9,7 +9,14 @@ type CommentDTO struct {
 }
 
 type CreateCommentDTO struct {
-	PostID  int    `json:"post_id" binding:"required"`
+	PostID  int    `json:"post_id" `
 	UserID  int    `json:"user_id" `
 	Content string `json:"content" binding:"required"`
+}
+
+type CommentDTOResponse struct {
+	ID      int    `json:"id"`
+	PostID  int    `json:"post_id"`
+	UserID  int    `json:"user_id"`
+	Content string `json:"content"`
 }

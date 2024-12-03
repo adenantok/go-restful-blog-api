@@ -58,6 +58,10 @@ func (repo *postRepository) UpdatePost(post *models.Post) (models.Post, error) {
 }
 
 func (repo *postRepository) DeletePost(ID int) error {
+	// Menghapus komentar yang terkait dengan post
+	if err := repo.db.Where("post_id = ?", ID).Delete(&models.Comment{}).Error; err != nil {
+		return err
+	}
 
 	if err := repo.db.Delete(&models.Post{}, ID).Error; err != nil {
 		return err
